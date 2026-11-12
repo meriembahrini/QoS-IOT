@@ -1,0 +1,25 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Resultats des simulations
+results/
+*.log
+
+# Captures et fichiers volumineux
+*.pcap
+*.pcapng
+*.lime
+*.raw
+*.dump
+
+# Secrets et configuration personnelle
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Systeme
+.DS_Store
