@@ -95,7 +95,6 @@ def phase(nom, duree, sauvegarde=False):
 
     debut = datetime.now(timezone.utc).isoformat()
 
-    application("alarme", "alarme_mqtt.py", f"{nom}_alarme")
     application("capteur", "capteur_mqtt.py", f"{nom}_capteur")
     application("acces", "acces_mqtt.py", f"{nom}_acces")
 
@@ -186,12 +185,22 @@ def scenario():
             ],
             camera
         )
-
     # Laisser le temps aux cameras de s'abonner
-    time.sleep(3)
+        time.sleep(3)
+
+    # Alarme MQTT continue pendant tout le scenario
+    lancer(
+        "alarme",
+        [
+                PYTHON, "-u",
+                str(ROOT / "iot/alarme_continue.py"),
+                "--duree=110",
+                "--intervalle=1"
+        ],
+        "alarme_continue"
+    )
 
     phases = []
-
     phases.append(phase("normal", 24))
 
     publier("INTRUSION_DETECTED")
@@ -204,7 +213,6 @@ def scenario():
         writer = csv.writer(f)
         writer.writerow(["phase", "debut_utc", "fin_utc"])
         writer.writerows(phases)
-
     # Conserver uniquement les nouveaux messages MQTT
     if CSV_IOT.exists():
         with open(CSV_IOT, "rb") as source:
